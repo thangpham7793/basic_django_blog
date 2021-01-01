@@ -14,5 +14,6 @@
         <p>
             No Posts Published
         </p>
-    {% endfor %} 
+    {% endfor %}
+    {% include "pagination.html" with page=page_obj %} 
 {% endblock content %}
