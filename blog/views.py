@@ -1,10 +1,12 @@
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import ListView
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from .models import Post
-from taggit.models import Tag
-from .forms import EmailPostForm, CommentForm
 from django.core.mail import send_mail
+
+from taggit.models import Tag
+
+from .models import Post
+from .forms import EmailPostForm, CommentForm, SearchForm
 
 
 # class PostListView(ListView):
@@ -20,6 +22,7 @@ def post_list(request, tag_slug=None):
     if tag_slug:
         tag = get_object_or_404(Tag, slug=tag_slug)
         posts = posts.filter(tags__in=[tag])
+
     paginator = Paginator(posts, 2)
     page = request.GET.get("page")
     try:
@@ -86,4 +89,20 @@ def post_share(request, post_id):
 
     return render(
         request, "blog/post/share.html", {"post": post, "form": form, "sent": sent}
+    )
+
+
+def post_search(request):
+    form = SearchForm()
+    query = None
+    results = []
+    if "query" in request.GET:
+        form = SearchForm(request.GET)
+        if form.is_valid():
+            query = form.cleaned_data["query"]
+            results = Post.published_posts.filter(body__icontains=query)
+    return render(
+        request,
+        "blog/post/search.html",
+        {"form": form, "query": query, "results": results},
     )

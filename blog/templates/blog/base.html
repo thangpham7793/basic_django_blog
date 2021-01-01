@@ -17,6 +17,18 @@
         {% show_blog_summary %}
         {% show_latest_posts %}
         {% show_most_commented_posts %}
+        <p>
+          <a href="{% url "blog:post_feed" %}">
+            Subscribe to my RSS feed
+          </a>
+        </p>
+        {% if request.get_full_path != "/blog/" %}
+          <div>
+            <p>
+              <a href="{% url "blog:post_list" %}">Home</a>
+            </p>
+          </div>
+        {% endif %}
     </div>
   </body>
 </html>
